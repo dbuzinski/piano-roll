@@ -1,5 +1,4 @@
 export const ItemTypes = {
-  EndBar: 'endbar',
-  Note: 'note',
-  NoteExtender: 'noteExtender'
+  NOTE: 'NOTE',
+  NOTE_EXTENDER: 'NOTE_EXTENDER'
 }

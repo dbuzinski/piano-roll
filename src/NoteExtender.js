@@ -1,31 +1,38 @@
 import React, { Component } from 'react';
-import {DragSource,DropTarget} from 'react-dnd';
+import {DragSource} from 'react-dnd';
 import PropTypes  from 'prop-types';
 import {ItemTypes} from './Constants';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-const noteExtenderSource = {
-  beginDrag(props) {
-    props.drag(props)
-    return {}
-  },
-  endDrag(props, monitor) {
-    const didDrop = monitor.didDrop()
-    if (!didDrop) {
-			props.drop(props)
-		}
+class NoteExtender extends Component {
+
+  componentDidMount() {
+    const { connectDragPreview } = this.props;
+    connectDragPreview(getEmptyImage());
   }
 
+
+  render() {
+    const { connectDragSource } = this.props;
+    return(connectDragSource(
+      <div className="NoteExtender">|</div>
+    ))
+  }
 }
 
-const noteExtenderTarget = {
-  drop(props,monitor) {
-    props.drop(props)
-    return
+
+const noteExtenderSource = {
+  beginDrag(props) {
+    return {id:props.id,
+      side:props.side,
+      leftEnd:props.leftEnd,
+      rightEnd:props.rightEnd,
+      row:props.row,
+      duration: props.rightEnd-props.leftEnd+1}
   },
 }
 
-function collectDrag(connect,monitor) {
+function collect(connect,monitor) {
   return {
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging(),
@@ -33,31 +40,9 @@ function collectDrag(connect,monitor) {
   }
 }
 
-function collectDrop(connect, monitor) {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver()
-  };
-}
-
-class NoteExtender extends Component {
-  componentDidMount() {
-    const { connectDragPreview } = this.props;
-    connectDragPreview(getEmptyImage());
-  }
-
-  render() {
-    const { connectDragSource, connectDropTarget, connectDragPreview } = this.props;
-    return(connectDragSource(connectDropTarget(
-      <div className="noteExtender">|</div>))
-  )}
-}
-
 NoteExtender.propTypes = {
   connectDragSource: PropTypes.func.isRequired,
   isDragging: PropTypes.bool.isRequired
 }
 
-const NoteExtenderDropTarget = DropTarget([ItemTypes.Note,ItemTypes.NoteExtender],noteExtenderTarget,collectDrop)(NoteExtender);
-
-export default DragSource(ItemTypes.NoteExtender,noteExtenderSource,collectDrag)(NoteExtenderDropTarget);
+export default DragSource(ItemTypes.NOTE_EXTENDER,noteExtenderSource,collect)(NoteExtender);
