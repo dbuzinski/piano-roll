@@ -1,8 +1,12 @@
 .App {
   padding: 100px;
+  height: 100%;
+  width: 100%;
+  color: #000;
 }
 
 .Container {
+  color: #000;
   position: relative;
   height: 130px;
   width: 480px;
@@ -12,7 +16,7 @@
 }
 
 .ContainerCell {
-  background-color: #555;
+  background-color: #999;
   border: 1px solid;
   z-index:-1;
 }
@@ -21,6 +25,7 @@
   background-color: #ff0;
   border: 1px solid;
   z-index: 5;
+  display: flex;
   justify-content: space-between;
 }
 
@@ -32,6 +37,14 @@
   text-align: center;
   cursor: col-resize;
   pointer-events: auto;
+}
+
+.ExtenderPreview {
+  background-color: #FFFF00;
+  font-size: 1vh;
+  height: 100%;
+  width: 5px;
+  text-align: center;
 }
 
 #menu {

@@ -23,6 +23,7 @@ class NoteExtender extends Component {
 
 const noteExtenderSource = {
   beginDrag(props) {
+    props.drag()
     return {id:props.id,
       side:props.side,
       leftEnd:props.leftEnd,
@@ -30,6 +31,9 @@ const noteExtenderSource = {
       row:props.row,
       duration: props.rightEnd-props.leftEnd+1}
   },
+  endDrag(props) {
+    props.drop()
+  }
 }
 
 function collect(connect,monitor) {

@@ -37,7 +37,7 @@ class Container extends Component {
           rightEnd={x.rightEnd}
           row={x.row}
           id={x.id}
-          onClick={this.props.deleteNote}
+          deleteNote={this.props.deleteNote}
           key = {'note ' + x.id}/>)
       )}
     </div>
@@ -53,7 +53,9 @@ const containerTarget = {
         let shiftX = Math.floor((x+15)/30);
         let shiftY = Math.floor((y+5)/10);
         let { id, row, leftEnd, rightEnd } = monitor.getItem();
-        props.moveNote(id, row + shiftY, leftEnd+shiftX, rightEnd+shiftX)
+        if (rightEnd+shiftX <= props.numCols && 0 < leftEnd+shiftX && row +shiftY <= props.numRows && 0 < row +shiftY) {
+          props.moveNote(id, row + shiftY, leftEnd+shiftX, rightEnd+shiftX)
+        }
         return
       }
       case ItemTypes.NOTE_EXTENDER: {

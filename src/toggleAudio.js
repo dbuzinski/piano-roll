@@ -25,7 +25,6 @@ const mapNoteToEvent = (note,bpm) => {
 
 const playLoop = (notes,bpm) => {
     var loop = notes.map(note => mapNoteToEvent(note,bpm));
-    console.log(loop);
     var synth = new Tone.PolySynth(12,Tone.Synth).toMaster();
     Tone.Transport.bpm.value = bpm
 
@@ -41,7 +40,7 @@ const playLoop = (notes,bpm) => {
 }
 
 const toggleAudio = ({notes,bpm,playing}) => {
-  if (playing) {
+  if (!playing) {
     Tone.Transport.stop()
     Tone.Transport.cancel()
   } else {

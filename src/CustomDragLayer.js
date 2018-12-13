@@ -24,18 +24,58 @@ function getItemStyles(props,itemType) {
           display: 'none'
         };
       }
-
       let { x, y } = currentOffset;
       let relativeX = x - initialOffset.x
       let relativeY = y - initialOffset.y
-      let [snappedX, snappedY] = snapToGrid(relativeX, relativeY)
+      let [snappedX, snappedY] = snapToGrid(relativeX, relativeY,'round')
       let newX = snappedX+initialOffset.x
       let newY = snappedY+initialOffset.y
-
       const transform = `translate(${newX}px, ${newY}px)`;
       return {
         transform: transform,
-        WebkitTransform: transform
+        WebkitTransform: transform,
+        width: 30*props.item.duration+'px',
+      };
+    }
+    case ItemTypes.NOTE_EXTENDER: {
+      const { initialOffset, currentOffset } = props;
+      if (!initialOffset || !currentOffset) {
+        return {
+          display: 'none'
+        };
+      }
+
+      let { x } = currentOffset;
+      let newX
+      let newY
+      let width
+      if (props.item.side === 'left') {
+        let relativeX = x - initialOffset.x
+        let [snappedX, snappedY] = snapToGrid(relativeX, 0,'floor')
+        newY = snappedY+initialOffset.y - 1
+        if (relativeX < 30*props.item.duration) {
+          newX = snappedX+initialOffset.x - 1
+          width = -1*snapToGrid(relativeX,0,'floor')[0]+30*props.item.duration +'px'
+        } else {
+          newX = snapToGrid(0, 0,'floor')[0]+initialOffset.x - 1
+          width = 30*props.item.duration +'px'
+        }
+      } else if (props.item.side === 'right') {
+        let relativeX = x - initialOffset.x
+        let [snappedX, snappedY] = snapToGrid(0, 0,'ceil')
+        newX = snappedX+initialOffset.x - (30*props.item.duration - 5 - 2) -1
+        newY = snappedY+initialOffset.y - 1
+        if (relativeX > -30*props.item.duration) {
+          width = snapToGrid(relativeX, 0,'ceil')[0]+30*props.item.duration +'px'
+        } else {
+          width = 30*props.item.duration +'px'
+        }
+      }
+      const transform = `translate(${newX}px, ${newY}px)`;
+      return {
+        transform: transform,
+        WebkitTransform: transform,
+        width:width,
       };
     }
     default:
@@ -48,8 +88,12 @@ class CustomDragLayer extends React.Component {
     switch (type) {
     case ItemTypes.NOTE:
       return (
-        <NotePreview duration = {item.duration}/>
+        <NotePreview />
       );
+    case ItemTypes.NOTE_EXTENDER: {
+    return (
+      <NotePreview />
+    );}
     default:
       return null
     }

@@ -7,34 +7,51 @@ import NoteExtender from './NoteExtender'
 
 class Note extends Component {
 
+  constructor() {
+    super();
+    this.state = {childDragging: false}
+  }
+
   componentDidMount() {
     const { connectDragPreview } = this.props;
     connectDragPreview(getEmptyImage());
   }
 
+  dragChild() {
+    this.setState((state)=>{return {childDragging:true}})
+  }
+
+  dropChild() {
+    this.setState((state)=>{return {childDragging:false}})
+  }
+
   render(){
 
-    const {leftEnd, rightEnd, row, id, onClick, connectDragSource, isDragging} = this.props
+    const {leftEnd, rightEnd, row, id, deleteNote, connectDragSource, isDragging} = this.props
     const styling = {
       gridRow:row,
-      display: isDragging? 'none' : 'flex',
+      opacity: ( isDragging || this.state.childDragging)? 0 : 1,
       gridColumn : leftEnd +'/'+ (rightEnd+1),
     }
 
     return (connectDragSource(
       <div className="Note"
         style = {styling}
-        onClick = {(e)=>onClick(e,id)}>
+        onClick = {(e)=> deleteNote(e,id)}>
         <NoteExtender id = {id}
           side = 'left'
           leftEnd = {leftEnd}
           rightEnd = {rightEnd}
-          row = {row}/>
+          row = {row}
+          drag = {() => this.dragChild()}
+          drop = {() => this.dropChild()}/>
         <NoteExtender id = {id}
           side = 'right'
           leftEnd = {leftEnd}
           rightEnd = {rightEnd}
-          row = {row}/>
+          row = {row}
+          drag = {() => this.dragChild()}
+          drop = {() => this.dropChild()}/>
       </div>
     ))
   }
@@ -49,12 +66,6 @@ const noteSource = {
       row: props.row,
       duration: props.rightEnd-props.leftEnd+1}
   },
-  endDrag(props, monitor) {
-    const didDrop = monitor.didDrop()
-    if (!didDrop) {
-      return
-    }
-  }
 }
 
 function collect(connect,monitor) {
